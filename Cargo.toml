@@ -1,0 +1,26 @@
+[package]
+name = "motor_simulation"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# 核心 GUI 框架与渲染后端
+eframe = "0.29"
+egui = "0.29"
+image = "0.24" # 用于加载图标
+# 可选：如果后续需要将应用状态保存到本地（如配置记忆），可以开启 serde 支持
+serde = { version = "1.0", features = ["derive"] }
+
+# 可选：原生平台下的日志记录（便于调试）
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+env_logger = "0.11"
+
+[profile.release]
+opt-level = 3             # 极致性能优化
+lto = "fat"               # 启用全程序 LTO（比 true 更彻底，但编译时间会变长）
+codegen-units = 1         # 牺牲编译速度以换取极致的单代码单元优化和体积缩减
+panic = "abort"           # 遇到 panic 时直接终止，省去栈展开（Unwind）的代码开销，显著减小体积
+strip = true              # 自动剥离符号表和调试信息（相当于手动 strip，大幅减小 .exe 体积）
+
+[build-dependencies]
+winres = "0.1"
